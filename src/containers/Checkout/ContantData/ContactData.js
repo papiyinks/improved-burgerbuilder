@@ -8,6 +8,7 @@ import styles from './ContactData.module.css';
 import axios from '../../../axios-orders';
 import withErrorHandler from '../../../hoc/withErrorHandler/wthErrorHandler';
 import * as actions from '../../../store/actions/index';
+import { checkValidation } from '../../../shared/utility';
 
 class ContactData extends Component {
     state = {
@@ -74,7 +75,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    isEmail: true
                 },
                 valid: false,
                 touched: false
@@ -113,35 +115,13 @@ class ContactData extends Component {
         this.props.onOrderBurger(order, this.props.token);
     }
 
-    checkValidation = (value, rules) => {
-        let isValid = true;
-
-        if (!rules) {
-            return true;
-        }
-        
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid; 
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid; 
-        }
-
-        return isValid;
-    }
-
     inputChangedHandler = (event, inputIdentifier) => {
         const updatedOrderForm = {
             ...this.state.orderForm
         }
         const updatedFormElement = {...updatedOrderForm[inputIdentifier]}
         updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = this.checkValidation(updatedFormElement.value, updatedFormElement.validation);
+        updatedFormElement.valid = checkValidation(updatedFormElement.value, updatedFormElement.validation);
         updatedFormElement.touched = true;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
 
